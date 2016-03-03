@@ -40,14 +40,12 @@ exports.run = function(grunt, options, files, done) {
 	 * @param  {Function} done Callback function called when different keys are loaded done(keys)
 	 */
 	function loadDiffKeys() {
-		var fname =  path.join(options.messagesPath, 'keys.csv');
-
+		var fname =  path.join(options.messagesPath, 'keys.xlsx');
 		// keys file exists
 		if (!grunt.file.exists(fname)) {
 			return;
 		}
 
-		// loead messages from keys.csv
 		var keys = commons.loadMessages(grunt, fname);
 
 		var diff = {};

@@ -1,7 +1,11 @@
 'use strict';
 
-var path = require('path'),
-	S = require('string');
+var path = require('path');
+var S = require('string');
+var fs = require ('fs');
+var xlsx = require('node-xlsx');
+
+
 
 /**
  * Load the messages from a csv file
@@ -16,16 +20,17 @@ exports.loadMessages = function(grunt, filepath) {
 		// if file doesn't exists, return an empty list
 		return items;
 	}
+	grunt.log.writeln(filepath);
 
-	var data = grunt.file.read(filepath);
+	var data = xlsx.parse(filepath); // parses a file
 
-	var rows = this.parseCSV(data);
-	rows.forEach(function(item) {
+	data[0].data.forEach(function(item) {
 		var key = item[0];
 		if (key !== '') {
 			items[item[0]] = item[1];
 		}
 	});
+	fs.writeFileSync(filepath + '.json', JSON.stringify(items, null, 4)); 
 	return items;
 };
 
@@ -42,9 +47,11 @@ exports.saveMessages = function (grunt, filepath, messages) {
 		var msg = messages[key];
 		data.push([key, msg]);
 	}
-
-	var csvdata = this.convertToCSV(data);
-	grunt.file.write(filepath, csvdata);
+	var buffer = xlsx.build([{
+		name: "mySheetName",
+		data: data
+	}]);
+	fs.writeFileSync(filepath, buffer, 'binary');
 };
 
 /**
@@ -58,7 +65,7 @@ exports.messagesFilename = function(options, locale) {
 	if (locale === options.defaultLocale) {
 		return;
 	}
-	return path.join(options.messagesPath, options.messagesFilePrefix + locale + '.csv');
+	return path.join(options.messagesPath, options.messagesFilePrefix + locale + '.xlsx');
 };
 
 /**

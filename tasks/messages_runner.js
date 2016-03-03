@@ -5,8 +5,10 @@
  */
 'use strict';
 
-var path = require('path'),
-	commons = require('./commons');
+var path = require('path');
+var commons = require('./commons');
+var fs = require ('fs');
+var xlsx = require('node-xlsx');
 
 /**
  * Entry point for the runner
@@ -226,7 +228,7 @@ exports.run = function(grunt, options, files) {
 	 * @return {[type]}           [description]
 	 */
 	function saveDefaultLocaleKeys(context) {
-		var filepath = path.join(options.messagesPath, 'keys.csv');
+		var filepath = path.join(options.messagesPath, 'keys.xlsx');
 		if (grunt.file.exists(filepath)) {
 			grunt.file.delete(filepath);
 		}
@@ -242,8 +244,9 @@ exports.run = function(grunt, options, files) {
 			data.push([key, '']);
 		});
 
-		// generate csv
-		var content = commons.convertToCSV(data);
-		grunt.file.write(filepath, content);
+		var buffer = xlsx.build([{
+			data: data
+		}]);
+		fs.writeFileSync(filepath, buffer, 'binary');
 	}
 };

@@ -28,7 +28,7 @@ module.exports = function(grunt) {
 			messagesFilePrefix: 'messages_',
 			// force the generation of all templates regardless of the file timestamp
 			forceRefresh: false,
-			// don't check for key changes in keys.csv
+			// don't check for key changes in keys.xslx
 			skipKeyRunner: false,
 			// don't generate the csv and json messages
 			skipMessagesRunner: false,
