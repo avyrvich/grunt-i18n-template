@@ -20,17 +20,14 @@ exports.loadMessages = function(grunt, filepath) {
 		// if file doesn't exists, return an empty list
 		return items;
 	}
-	grunt.log.writeln(filepath);
-
+	grunt.log.writeln("Load messages from " + filepath);
 	var data = xlsx.parse(filepath); // parses a file
-
 	data[0].data.forEach(function(item) {
 		var key = item[0];
 		if (key !== '') {
 			items[item[0]] = item[1];
 		}
 	});
-	fs.writeFileSync(filepath + '.json', JSON.stringify(items, null, 4)); 
 	return items;
 };
 
