@@ -19,7 +19,9 @@ var xlsx = require('node-xlsx');
 exports.run = function(grunt, options, files) {
 
 	// group all relevant data in a single object
-	var context = {keys: [],
+	var context = {
+		keys: [],
+		refs: {},
 		options: options,
 		brokenlst: [],
 		emptylst: [],
@@ -38,7 +40,7 @@ exports.run = function(grunt, options, files) {
 	// Iterate over all specified file groups.
 	files.forEach(function(f) {
 		// read keys from the template files
-		readKeysFromTemplates(f.src, context.keys);
+		readKeysFromTemplates(f.src, context.keys, context.refs);
 	});
 
 	updateMessageFiles();
@@ -52,7 +54,7 @@ exports.run = function(grunt, options, files) {
 	 * Read keys from the template files
 	 * @return {[type]} [description]
 	 */
-	function readKeysFromTemplates(files, keys) {
+	function readKeysFromTemplates(files, keys, refs) {
 		files.forEach(function(filepath) {
 			// Warn on and remove invalid source files (if nonull was set).
 			if (!grunt.file.exists(filepath)) {
@@ -60,7 +62,7 @@ exports.run = function(grunt, options, files) {
 				return;
 			}
 
-			readKeysFromTemplateFile(filepath, keys);
+			readKeysFromTemplateFile(filepath, keys, refs);
 		});
 
 		return keys;
@@ -72,7 +74,7 @@ exports.run = function(grunt, options, files) {
 	 * @param  {[type]} keys     [description]
 	 * @return {[type]}          [description]
 	 */
-	function readKeysFromTemplateFile(filepath, keys) {
+	function readKeysFromTemplateFile(filepath, keys, refs) {
 		var template = grunt.file.read(filepath);
 
 		var templkeys = template.match(/\[\[.+?\]\]/ig);
@@ -82,6 +84,7 @@ exports.run = function(grunt, options, files) {
 				item = item.substring(2, item.length-2);
 				if (keys.indexOf(item) === -1) {
 					keys.push(item);
+					refs[item] = filepath.match(/.*[\/\\](.*?)$/).pop();
 				}
 			});
 		}
@@ -150,7 +153,7 @@ exports.run = function(grunt, options, files) {
 	/**
 	 * update the keys in memory of the list of messages
 	 */
-	function updateMessagesKeys(messagefile, keys, msgs) {
+	function updateMessagesKeys(messagefile, keys, msgs, refs) {
 		var emptylst = context.emptylst;
 
 		var changed = false;
@@ -168,10 +171,10 @@ exports.run = function(grunt, options, files) {
 		});
 
 		if (options.removeEmptyKeys) {
-			// remove empty messages that are not in the key
+			// remove messages that are not in the key
 			var toRemove = [];
 			for (var key in msgs) {
-				if ((msgs[key] === '') && (keys.indexOf(key) === -1)) {
+				if ((keys.indexOf(key) === -1)) {
 					toRemove.push(key);
 				}
 			}
@@ -241,7 +244,7 @@ exports.run = function(grunt, options, files) {
 		var data = [];
 
 		keys.forEach(function(key) {
-			data.push([key, '']);
+			data.push([key, '', context.refs[key]]);
 		});
 
 		var buffer = xlsx.build([{
