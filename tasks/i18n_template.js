@@ -40,8 +40,6 @@ module.exports = function(grunt) {
 			jsonPath: undefined,
 			// if true, remove empty keys found in CSV and not found in template files
      removeEmptyKeys: true,
-     // if false, don't escape HTML in messages
-     htmlEscape: true
 		});
 
 		var files = this.files;

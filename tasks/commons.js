@@ -1,7 +1,6 @@
 'use strict';
 
 var path = require('path');
-var S = require('string');
 var fs = require ('fs');
 var xlsx = require('node-xlsx');
 
@@ -73,37 +72,5 @@ exports.messagesFilename = function(options, locale) {
  * @return {[type]}          [description]
  */
 exports.replaceAll = function(data, token, newtoken) {
-	return S(data).replaceAll(token, newtoken);
-};
-
-
-/**
- * Parse a CSV string data to an array
- * @param  {string} data CSV data in string format
- * @return {array}      array of array of data
- */
-exports.parseCSV = function(data) {
-	return S(data).parseCSV(',', '"', '\\', '\n');
-};
-
-/**
- * Convert an array of arrays to a CSV file
- * @param  {array} lst Contain an array of array of data
- * @return {string}     CSV in string format
- */
-exports.convertToCSV = function(lst) {
-	var data = '';
-	lst.forEach(function(item) {
-		var line = S(item).toCSV().s;
-		if (data.length > 0) {
-			data += '\n';
-		}
-		data += line;
-	});
-	return data;
-};
-
-
-exports.escapeHTML = function(s) {
-	return S(s).escapeHTML();
+	return data.toString().split(token).join(newtoken);
 };
