@@ -27,13 +27,13 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "grunt": "^1.1.0",
-    "grunt-contrib-clean": "^0.5.0",
-    "grunt-contrib-jshint": "^2.1.0",
-    "grunt-contrib-nodeunit": "^0.3.3"
+    "grunt": "^1.6.1",
+    "grunt-contrib-clean": "^2.0.1",
+    "grunt-contrib-jshint": "^3.2.0",
+    "grunt-contrib-nodeunit": "^5.0.0"
   },
   "dependencies": {
-    "node-xlsx": "^0.6.0"
+    "node-xlsx": "^0.24.0"
   },
   "keywords": [
     "gruntplugin"
